@@ -335,6 +335,6 @@ Contributions are welcome! Please open an issue or submit a pull request.
 
 ## Credits
 
-Created by the team.
+Created by fajarxfce.
 
 Inspired by MVI pattern from Android development and side-effect handling patterns from other reactive frameworks.

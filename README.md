@@ -23,7 +23,7 @@ class LoginError extends LoginState {
 
 ## The Solution
 
-bloc_with_effect separates State (UI representation) from Effects (single-shot events):
+blocfx separates State (UI representation) from Effects (single-shot events):
 
 ```dart
 // State represents UI
@@ -48,7 +48,7 @@ Add to your pubspec.yaml:
 
 ```yaml
 dependencies:
-  bloc_with_effect: ^0.1.0
+  blocfx: ^0.1.0
 ```
 
 ## Usage
@@ -56,7 +56,7 @@ dependencies:
 ### 1. Create your Bloc with Effects
 
 ```dart
-import 'package:bloc_with_effect/bloc_with_effect.dart';
+import 'package:blocfx/blocfx.dart';
 
 // Define effects
 abstract class LoginEffect {}
@@ -88,7 +88,7 @@ class LoginState {
 }
 
 // Create Bloc with Effects
-class LoginBloc extends BlocWithEffect<LoginEvent, LoginState, LoginEffect> {
+class LoginBloc extends BlocFx<LoginEvent, LoginState, LoginEffect> {
   final AuthRepository _authRepository;
 
   LoginBloc(this._authRepository)
@@ -116,17 +116,17 @@ class LoginBloc extends BlocWithEffect<LoginEvent, LoginState, LoginEffect> {
 
 ### 2. Consume Effects in UI
 
-Use BlocEffectConsumer to handle both state changes and effects:
+Use BlocFxConsumer to handle both state changes and effects:
 
 ```dart
-import 'package:bloc_with_effect/bloc_with_effect.dart';
+import 'package:blocfx/blocfx.dart';
 
 class LoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (_) => LoginBloc(authRepository),
-      child: BlocEffectConsumer<LoginBloc, LoginEvent, LoginState, LoginEffect>(
+      child: BlocFxConsumer<LoginBloc, LoginEvent, LoginState, LoginEffect>(
         // Handle state changes (rebuilds UI)
         builder: (context, state) {
           return Column(
@@ -166,12 +166,12 @@ class LoginPage extends StatelessWidget {
 }
 ```
 
-### 3. Or use BlocEffectListener for effects only
+### 3. Or use BlocFxListener for effects only
 
 When you only need to listen to effects without rebuilding:
 
 ```dart
-BlocEffectListener<LoginBloc, LoginEvent, LoginState, LoginEffect>(
+BlocFxListener<LoginBloc, LoginEvent, LoginState, LoginEffect>(
   listener: (context, effect) {
     if (effect is NavigateToDashboard) {
       Navigator.pushReplacementNamed(context, '/dashboard');
@@ -201,7 +201,7 @@ BlocSelector<LoginBloc, LoginState, bool>(
 ### Conditional effect listening
 
 ```dart
-BlocEffectListener<LoginBloc, LoginEvent, LoginState, LoginEffect>(
+BlocFxListener<LoginBloc, LoginEvent, LoginState, LoginEffect>(
   listenWhen: (effect) => effect is ShowErrorDialog,
   listener: (context, effect) {
     // Only handles ShowErrorDialog effects
@@ -248,21 +248,21 @@ test('emits ShowErrorDialog effect on login failure', () async {
 
 ## API Reference
 
-### BlocWithEffect
+### BlocFx
 
 ```dart
-abstract class BlocWithEffect<Event, State, Effect> extends Bloc<Event, State> {
+abstract class BlocFx<Event, State, Effect> extends Bloc<Event, State> {
   Stream<Effect> get effects;
   void emitEffect(Effect effect);
 }
 ```
 
-### BlocEffectConsumer
+### BlocFxConsumer
 
 Widget that rebuilds on state changes AND listens to effects.
 
 ```dart
-BlocEffectConsumer<B extends BlocWithEffect<Event, S, E>, Event, S, E>({
+BlocFxConsumer<B extends BlocFx<Event, S, E>, Event, S, E>({
   required Widget Function(BuildContext context, S state) builder,
   required void Function(BuildContext context, E effect) effectListener,
   bool Function(S previous, S current)? buildWhen,
@@ -270,12 +270,12 @@ BlocEffectConsumer<B extends BlocWithEffect<Event, S, E>, Event, S, E>({
 })
 ```
 
-### BlocEffectListener
+### BlocFxListener
 
 Widget that only listens to effects without rebuilding.
 
 ```dart
-BlocEffectListener<B extends BlocWithEffect<Event, S, E>, Event, S, E>({
+BlocFxListener<B extends BlocFx<Event, S, E>, Event, S, E>({
   required void Function(BuildContext context, E effect) listener,
   bool Function(E effect)? listenWhen,
   required Widget child,
@@ -284,10 +284,10 @@ BlocEffectListener<B extends BlocWithEffect<Event, S, E>, Event, S, E>({
 
 ## Migration from flutter_bloc
 
-1. Change `extends Bloc` to `extends BlocWithEffect`
+1. Change `extends Bloc` to `extends BlocFx`
 2. Add Effect type parameter to your Bloc class
 3. Replace state-based navigation/dialogs with `emitEffect()`
-4. Use `BlocEffectConsumer` or `BlocEffectListener` in your UI
+4. Use `BlocFxConsumer` or `BlocFxListener` in your UI
 5. Handle effects in `effectListener` callback
 
 Example:
@@ -308,7 +308,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
 }
 
 // After
-class LoginBloc extends BlocWithEffect<LoginEvent, LoginState, LoginEffect> {
+class LoginBloc extends BlocFx<LoginEvent, LoginState, LoginEffect> {
   LoginBloc() : super(LoginState(isLoading: false)) {
     on<LoginSubmitted>((event, emit) async {
       emit(state.copyWith(isLoading: true));

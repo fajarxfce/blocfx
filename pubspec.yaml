@@ -29,7 +29,3 @@ topics:
   - mvi
   - side-effects
   - flutter
-
-screenshots:
-  - description: "BlocFx example usage"
-    path: screenshots/example.png

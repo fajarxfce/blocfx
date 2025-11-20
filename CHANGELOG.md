@@ -5,6 +5,19 @@ All notable changes to bloc_with_effect will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.1] - 2024-11-20
+
+### Added
+
+- `CubitFx<State, Effect>` - Core class extending `Cubit` with effect support
+- `CubitfxListener<C, S, E>` - Widget for listening to Cubit effects without rebuilding
+- Full Cubit support alongside existing Bloc functionality
+- Cubit effects can be handled separately from state changes
+
+### Changed
+
+- Fixed generic type constraints in `CubitfxListener` to properly support Cubit classes
+
 ## [0.1.0] - 2024-11-03
 
 ### Added

@@ -1,6 +1,6 @@
 name: blocfx
 description: A Flutter package that adds Effect (side-effects) support to flutter_bloc, following MVI pattern for handling single-shot events like navigation and dialogs, bottomsheet, etc.
-version: 0.1.0
+version: 0.1.1
 homepage: https://github.com/fajarxfce/blocfx
 repository: https://github.com/fajarxfce/blocfx
 issue_tracker: https://github.com/fajarxfce/blofx/issues

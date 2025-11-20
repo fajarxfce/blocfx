@@ -4,3 +4,4 @@ export 'src/blocfx_consumer.dart';
 
 export 'src/cubitfx.dart';
 export 'src/cubitfx_listener.dart';
+export 'src/cubitfx_consumer.dart';

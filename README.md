@@ -48,12 +48,14 @@ Add to your pubspec.yaml:
 
 ```yaml
 dependencies:
-  blocfx: ^0.1.0
+  blocfx: ^0.1.1
 ```
 
 ## Usage
 
-### 1. Create your Bloc with Effects
+### Using with Bloc (Event-driven)
+
+#### 1. Create your Bloc with Effects
 
 ```dart
 import 'package:blocfx/blocfx.dart';
@@ -114,7 +116,7 @@ class LoginBloc extends BlocFx<LoginEvent, LoginState, LoginEffect> {
 }
 ```
 
-### 2. Consume Effects in UI
+#### 2. Consume Effects in UI
 
 Use BlocFxConsumer to handle both state changes and effects:
 
@@ -166,7 +168,7 @@ class LoginPage extends StatelessWidget {
 }
 ```
 
-### 3. Or use BlocFxListener for effects only
+#### 3. Or use BlocFxListener for effects only
 
 When you only need to listen to effects without rebuilding:
 
@@ -179,6 +181,115 @@ BlocFxListener<LoginBloc, LoginEvent, LoginState, LoginEffect>(
   },
   child: YourWidget(),
 )
+```
+
+### Using with Cubit (Simpler state management)
+
+#### 1. Create your Cubit with Effects
+
+```dart
+import 'package:blocfx/blocfx.dart';
+
+// Define effects
+abstract class ProfileEffect {}
+class ShowSuccessMessage extends ProfileEffect {
+  final String message;
+  ShowSuccessMessage(this.message);
+}
+class NavigateToSettings extends ProfileEffect {}
+
+// Define state
+class ProfileState {
+  final bool isLoading;
+  final String name;
+  final String email;
+
+  ProfileState({
+    required this.isLoading,
+    required this.name,
+    required this.email,
+  });
+
+  ProfileState copyWith({bool? isLoading, String? name, String? email}) {
+    return ProfileState(
+      isLoading: isLoading ?? this.isLoading,
+      name: name ?? this.name,
+      email: email ?? this.email,
+    );
+  }
+}
+
+// Create Cubit with Effects
+class ProfileCubit extends Cubitfx<ProfileState, ProfileEffect> {
+  final ProfileRepository _repository;
+
+  ProfileCubit(this._repository)
+      : super(ProfileState(isLoading: false, name: '', email: ''));
+
+  Future<void> updateProfile(String name, String email) async {
+    emit(state.copyWith(isLoading: true));
+
+    try {
+      await _repository.update(name, email);
+      emit(state.copyWith(isLoading: false, name: name, email: email));
+      emitEffect(ShowSuccessMessage('Profile updated successfully'));
+    } catch (e) {
+      emit(state.copyWith(isLoading: false));
+      emitEffect(ShowSuccessMessage('Failed to update profile'));
+    }
+  }
+}
+```
+
+#### 2. Consume Cubit Effects in UI
+
+```dart
+class ProfilePage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (_) => ProfileCubit(profileRepository),
+      child: Scaffold(
+        appBar: AppBar(title: Text('Profile')),
+        body: CubitfxListener<ProfileCubit, ProfileState, ProfileEffect>(
+          listener: (context, effect) {
+            if (effect is ShowSuccessMessage) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text(effect.message)),
+              );
+            } else if (effect is NavigateToSettings) {
+              Navigator.pushNamed(context, '/settings');
+            }
+          },
+          child: BlocBuilder<ProfileCubit, ProfileState>(
+            builder: (context, state) {
+              if (state.isLoading) {
+                return Center(child: CircularProgressIndicator());
+              }
+              return Column(
+                children: [
+                  TextField(
+                    decoration: InputDecoration(labelText: 'Name'),
+                    controller: TextEditingController(text: state.name),
+                  ),
+                  TextField(
+                    decoration: InputDecoration(labelText: 'Email'),
+                    controller: TextEditingController(text: state.email),
+                  ),
+                  ElevatedButton(
+                    onPressed: () => context.read<ProfileCubit>()
+                        .updateProfile('New Name', 'new@email.com'),
+                    child: Text('Update'),
+                  ),
+                ],
+              );
+            },
+          ),
+        ),
+      ),
+    );
+  }
+}
 ```
 
 ## Advanced Usage
@@ -257,6 +368,15 @@ abstract class BlocFx<Event, State, Effect> extends Bloc<Event, State> {
 }
 ```
 
+### Cubitfx
+
+```dart
+abstract class Cubitfx<State, Effect> extends Cubit<State> {
+  Stream<Effect> get effects;
+  void emitEffect(Effect effect);
+}
+```
+
 ### BlocFxConsumer
 
 Widget that rebuilds on state changes AND listens to effects.
@@ -282,13 +402,35 @@ BlocFxListener<B extends BlocFx<Event, S, E>, Event, S, E>({
 })
 ```
 
+### CubitfxListener
+
+Widget that only listens to Cubit effects without rebuilding.
+
+```dart
+CubitfxListener<C extends Cubitfx<S, E>, S, E>({
+  required void Function(BuildContext context, E effect) listener,
+  bool Function(E effect)? listenWhen,
+  required Widget child,
+})
+```
+
 ## Migration from flutter_bloc
+
+### From Bloc to BlocFx
 
 1. Change `extends Bloc` to `extends BlocFx`
 2. Add Effect type parameter to your Bloc class
 3. Replace state-based navigation/dialogs with `emitEffect()`
 4. Use `BlocFxConsumer` or `BlocFxListener` in your UI
 5. Handle effects in `effectListener` callback
+
+### From Cubit to Cubitfx
+
+1. Change `extends Cubit` to `extends Cubitfx`
+2. Add Effect type parameter to your Cubit class
+3. Replace state-based navigation/dialogs with `emitEffect()`
+4. Use `CubitfxListener` in your UI
+5. Handle effects in `listener` callback
 
 Example:
 

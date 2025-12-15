@@ -69,10 +69,10 @@ If you want state persistence, initialize it in your `main()`:
 ```dart
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   // Initialize state persistence
   await BlocFxPersistence.initialize();
-  
+
   runApp(MyApp());
 }
 ```
@@ -699,7 +699,7 @@ class PersistenceConfig {
   final Duration debounceTime;
   final bool clearOnLogout;
   final bool skipDuplicates;
-  
+
   const PersistenceConfig({
     this.debounceTime = const Duration(milliseconds: 300),
     this.clearOnLogout = false,
@@ -838,13 +838,13 @@ class LoginBloc extends BlocFx<LoginEvent, LoginState, LoginEffect> {
 // After - Add persistence
 class LoginBloc extends PersistedBlocFx<LoginEvent, LoginState, LoginEffect> {
   LoginBloc() : super(LoginState.initial());
-  
+
   @override
   String get storageKey => 'login_bloc';
-  
+
   @override
   LoginState fromJson(Map<String, dynamic> json) => LoginState.fromJson(json);
-  
+
   @override
   Map<String, dynamic> toJson(LoginState state) => state.toJson();
 }
@@ -852,12 +852,12 @@ class LoginBloc extends PersistedBlocFx<LoginEvent, LoginState, LoginEffect> {
 // Add toJson/fromJson to your state class
 class LoginState {
   // ... existing code
-  
+
   Map<String, dynamic> toJson() => {
     'isLoading': isLoading,
     'email': email,
   };
-  
+
   factory LoginState.fromJson(Map<String, dynamic> json) => LoginState(
     isLoading: json['isLoading'] ?? false,
     email: json['email'] ?? '',
@@ -878,6 +878,7 @@ Contributions are welcome! Please open an issue or submit a pull request.
 Created by [fajarxfce](https://github.com/fajarxfce).
 
 Inspired by:
+
 - MVI pattern from Android development
 - Side-effect handling patterns from reactive frameworks
 - Hydrated Bloc pattern for state persistence

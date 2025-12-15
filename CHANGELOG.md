@@ -1,9 +1,48 @@
 # Changelog
 
-All notable changes to bloc_with_effect will be documented in this file.
+All notable changes to blocfx will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [0.2.0] - 2024-12-15
+
+### Added
+
+- **State Persistence** - Automatic state persistence with hydrated pattern
+- `PersistedBlocFx<Event, State, Effect>` - BlocFx with built-in state persistence
+- `PersistedCubitfx<State, Effect>` - Cubitfx with built-in state persistence
+- `BlocFxPersistence` - Global persistence manager for initialization
+- `BlocStorage` - Abstract interface for custom storage implementations
+- `SharedPreferencesStorage` - Default storage implementation using SharedPreferences
+- `PersistenceConfig` - Configuration class for customizing persistence behavior
+- Auto-save with debouncing to prevent excessive I/O operations
+- Auto-restore state on bloc/cubit initialization (hydrated pattern)
+- Synchronous state restoration for instant hydration
+- `init()` method in BlocStorage interface for storage initialization
+- `readSync()` method for synchronous state reading
+- Support for selective persistence with `shouldPersist()` override
+- Skip duplicate saves with configurable `skipDuplicates` option
+- Optional clear on logout with `clearOnLogout` configuration
+
+### Changed
+
+- Package description updated to include state persistence features
+- Storage backends now implement `init()` for proper initialization
+- Type-safe persistence without runtime casting
+
+### Features
+
+- **Zero Boilerplate** - State automatically restored on bloc creation
+- **Storage Agnostic** - Easy to implement custom storage (Hive, Isar, SQLite, etc.)
+- **Type-Safe** - Full type safety with JSON serialization/deserialization
+- **Flexible** - Configure debounce time, skip duplicates, and persistence conditions
+- **Error Resilient** - Graceful error handling, persistence failures won't crash the app
+- **Clean API** - Simple `toJson()` and `fromJson()` methods for state serialization
+
+### Dependencies
+
+- Added `shared_preferences: ^2.3.4` for default storage implementation
 
 ## [0.1.1] - 2024-11-20
 

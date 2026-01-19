@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../blocfx.dart';
@@ -62,6 +63,7 @@ abstract class PersistedBlocFx<Event, State, Effect>
 
       return fromJson(data);
     } catch (e) {
+      debugPrint('Error hydrating state for $storageKey: $e');
       return null;
     }
   }
@@ -81,6 +83,7 @@ abstract class PersistedBlocFx<Event, State, Effect>
         await storage.write(storageKey, data);
         _lastPersistedState = state;
       } catch (e) {
+        debugPrint('Error persisting state for $storageKey: $e');
         // Silently fail to prevent app crashes
       }
     });
@@ -95,6 +98,7 @@ abstract class PersistedBlocFx<Event, State, Effect>
       await storage.delete(storageKey);
       _lastPersistedState = null;
     } catch (e) {
+      debugPrint('Error clearing persisted state for $storageKey: $e');
       // Silently fail
     }
   }

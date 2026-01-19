@@ -5,6 +5,19 @@ All notable changes to blocfx will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.1] - 2026-01-19
+
+### Added
+
+- `stateListener` parameter in `BlocFxListener` for listening to state changes alongside effects
+- `stateListenWhen` parameter for conditional state listening
+- Support for simultaneous effect and state listening in a single listener widget
+
+### Improved
+
+- `BlocFxListener` now more flexible - can listen to effects only, state only, or both
+- Better separation of concerns with independent effect and state subscriptions
+
 ## [0.2.0] - 2024-12-15
 
 ### Added

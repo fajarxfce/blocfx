@@ -1,6 +1,6 @@
 name: blocfx
 description: A Flutter package that extends flutter_bloc with Effect streams for handling single-shot events and automatic state persistence. Following MVI pattern with hydrated state support.
-version: 0.2.0
+version: 0.2.1
 homepage: https://github.com/fajarxfce/blocfx
 repository: https://github.com/fajarxfce/blocfx
 issue_tracker: https://github.com/fajarxfce/blofx/issues

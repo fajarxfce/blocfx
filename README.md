@@ -57,7 +57,7 @@ Add to your pubspec.yaml:
 
 ```yaml
 dependencies:
-  blocfx: ^0.2.0
+  blocfx: ^0.2.1
 ```
 
 ## Quick Start
@@ -567,6 +567,42 @@ BlocFxListener<LoginBloc, LoginEvent, LoginState, LoginEffect>(
   listenWhen: (effect) => effect is ShowErrorDialog,
   listener: (context, effect) {
     // Only handles ShowErrorDialog effects
+  },
+  child: YourWidget(),
+)
+```
+
+### Listen to Both State and Effects
+
+`BlocFxListener` now supports listening to both state changes and effects:
+
+```dart
+BlocFxListener<LoginBloc, LoginEvent, LoginState, LoginEffect>(
+  // Listen to effects
+  listener: (context, effect) {
+    if (effect is NavigateToDashboard) {
+      Navigator.pushNamed(context, '/dashboard');
+    } else if (effect is ShowErrorDialog) {
+      showDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+          title: Text('Error'),
+          content: Text(effect.message),
+        ),
+      );
+    }
+  },
+  // Listen to state changes (optional)
+  stateListener: (context, state) {
+    print('State changed: isLoading=${state.isLoading}');
+    if (state.isAuthenticated) {
+      // Handle authenticated state
+    }
+  },
+  // Conditional state listening (optional)
+  stateListenWhen: (previous, current) {
+    // Only listen when auth status changes
+    return previous.isAuthenticated != current.isAuthenticated;
   },
   child: YourWidget(),
 )
